@@ -18,7 +18,7 @@ class Follower {
 
 public:
   float pos_x, pos_y;
-  float v = 0.01;
+  float v = 0.05;
 
   Follower(int x, int y) : pos_x(x), pos_y(y) {}
 
