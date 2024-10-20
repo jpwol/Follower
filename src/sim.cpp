@@ -28,6 +28,9 @@ void Sim::handleEvents() {
       case SDLK_ESCAPE:
         running = false;
         break;
+      case SDLK_SPACE:
+        guy.setDetection(false);
+        break;
       case SDLK_w:
         guy.increaseAngle();
         break;

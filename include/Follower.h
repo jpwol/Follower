@@ -7,7 +7,8 @@ inline const float PI = 3.14;
 
 class Follower {
   bool detected = false;
-  float aof = PI / 3;
+  // float aof = PI / 3;
+  float aof = PI;
   float aos = PI / 3;
   int radius = 90;
   int distanceMag;
@@ -27,4 +28,7 @@ public:
   void decreaseAngle();
 
   bool getDetection() { return detected; }
+  void setDetection(bool d) { detected = d; }
+
+  bool isDetected();
 };

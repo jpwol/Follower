@@ -1,5 +1,9 @@
 #include "Follower.h"
 
+float dotProduct(float ax, float ay, float bx, float by) {
+  return (ax * bx) + (ay * by);
+}
+
 void Follower::updateFollower() {
   SDL_GetMouseState(&m_x, &m_y);
   float x_dif = static_cast<float>(m_x) - pos_x;
@@ -10,11 +14,14 @@ void Follower::updateFollower() {
   y_dif = y_dif / mv_v;
 
   float dx = 0.01, dy = 0.01;
+  if (isDetected() && distanceMag <= radius)
+    detected = true;
+
   if (detected) {
     pos_x += (v * x_dif);
     pos_y += (v * y_dif);
 
-    aof = asin((float)sideY / (float)distanceMag);
+    aof = atan2(v * y_dif, v * x_dif);
   }
 
   if (aof >= PI * 2)
@@ -35,7 +42,7 @@ void Follower::drawSightCone(SDL_Renderer *renderer) {
 
   sideX = m_x - pos_x;
   sideY = m_y - pos_y;
-  distanceMag = sqrt(pow(sideX, 2) + pow(sideY, 2));
+  distanceMag = sqrt(sideX * sideX + sideY * sideY);
 
   for (float omega = aof + (-aos * 0.5f); omega < aof + (aos * 0.5f);
        omega += 0.01f) {
@@ -44,19 +51,20 @@ void Follower::drawSightCone(SDL_Renderer *renderer) {
 
     SDL_RenderDrawPoint(renderer, pos_x + xc, pos_y + yc);
   }
-  if (distanceMag <= radius) {
-    if (sideX > 0) {
-      if (sideY > 0) {
-        if (m_x > pos_x + x1 && m_x < pos_x + x2 && m_y < pos_y + y1 &&
-            m_y > pos_y + y2)
-          detected = true;
-      }
-    }
-  } else {
-    // detected = false;
-  }
 }
 
 void Follower::increaseAngle() { aof += 0.1f; }
 
 void Follower::decreaseAngle() { aof -= 0.1f; }
+
+bool Follower::isDetected() {
+  float coneX = radius * cos(aof);
+  float coneY = radius * sin(aof);
+
+  float dot = dotProduct((float)sideX / distanceMag, (float)sideY / distanceMag,
+                         coneX / radius, coneY / radius);
+
+  float angle = acos(dot);
+
+  return angle < (aof / 2.0f);
+}
