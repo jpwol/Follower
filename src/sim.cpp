@@ -52,6 +52,8 @@ void Sim::render() {
   m_rect.x = guy.pos_x - 10;
   m_rect.y = guy.pos_y - 10;
 
+  if (guy.getDetection())
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
   guy.drawSightCone(renderer);
 
   SDL_RenderFillRect(renderer, &m_rect);
